@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>3年2組 教材保管庫</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Yu Gothic", "Meiryo", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #fffde7);
+      color: #333;
+    }
+
+    header {
+      padding: 35px 20px;
+      text-align: center;
+      background: #42a5f5;
+      color: white;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 6vw, 52px);
+    }
+
+    header p {
+      margin: 12px 0 0;
+      font-size: 19px;
+    }
+
+    main {
+      width: min(900px, 92%);
+      margin: 45px auto;
+    }
+
+    .button-area {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .subject-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+      padding: 20px;
+      border-radius: 24px;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .subject-button:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .japanese {
+      background: #ef5350;
+    }
+
+    .math {
+      background: #42a5f5;
+    }
+
+    .integrated {
+      background: #66bb6a;
+    }
+
+    .moral {
+      background: #ab47bc;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      .button-area {
+        grid-template-columns: 1fr;
+      }
+
+      .subject-button {
+        min-height: 110px;
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>3年2組 教材保管庫</h1>
+    <p>使いたい教科をえらびましょう</p>
+  </header>
+
+  <main>
+    <div class="button-area">
+
+      <a href="kokugo.html" class="subject-button japanese">
+        国語
+      </a>
+
+      <a href="sansuu.html" class="subject-button math">
+        算数
+      </a>
+
+      <a href="sougou.html" class="subject-button integrated">
+        総合
+      </a>
+
+      <a href="doutoku.html" class="subject-button moral">
+        道徳
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    3年2組
+  </footer>
+
+</body>
+</html>
