@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  >
+
+  <title>線分図作成ツール</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f5f5f5;
+      color: #222;
+      font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        Meiryo,
+        sans-serif;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 28px;
+      background: #ffffff;
+      border: 2px solid #222;
+      border-radius: 16px;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      text-align: center;
+      font-size: 30px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 700px;
+      margin: 0 auto 42px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      background: #ffffff;
+      font: inherit;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    input:focus {
+      border-color: #1976d2;
+      outline: 3px solid #bbdefb;
+    }
+
+    .diagram-area {
+      padding: 25px 10px 35px;
+      background: #ffffff;
+    }
+
+    .total-label {
+      margin-bottom: 14px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .bar {
+      display: grid;
+      width: 100%;
+      height: 130px;
+      border: 4px solid #222;
+      background: #ffffff;
+    }
+
+    .segment {
+      border-right: 3px solid #222;
+    }
+
+    .segment:last-child {
+      border-right: none;
+    }
+
+    .button-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    button,
+    .back-button {
+      min-width: 220px;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 14px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .screenshot-button {
+      background: #43a047;
+      box-shadow: 0 5px 0 #2e7d32;
+    }
+
+    .screenshot-button:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #2e7d32;
+    }
+
+    .back-button {
+      display: inline-block;
+      background: #2196f3;
+      box-shadow: 0 5px 0 #1565c0;
+    }
+
+    .back-button:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #1565c0;
+    }
+
+    .message {
+      min-height: 28px;
+      margin: 18px 0 0;
+      color: #2e7d32;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .preview-area {
+      display: none;
+      margin-top: 28px;
+      padding: 20px;
+      border: 3px solid #43a047;
+      border-radius: 16px;
+      background: #f1f8e9;
+      text-align: center;
+    }
+
+    .preview-area.show {
+      display: block;
+    }
+
+    .preview-area h2 {
+      margin: 0 0 10px;
+      color: #2e7d32;
+      font-size: 24px;
+    }
+
+    .preview-guide {
+      margin: 0 0 16px;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .preview-image {
+      display: block;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      margin: 0 auto;
+      border: 2px solid #555;
+      background: #ffffff;
+      -webkit-touch-callout: default;
+      user-select: auto;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .diagram-area {
+        padding-right: 0;
+        padding-left: 0;
+      }
+
+      .bar {
+        height: 100px;
+      }
+
+      .total-label {
+        font-size: 24px;
+      }
+
+      button,
+      .back-button {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .preview-area {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <h1>線分図作成ツール</h1>
+
+    <section class="controls">
+
+      <label for="total">
+        元の長さ
+
+        <input
+          id="total"
+          type="number"
+          min="1"
+          value=""
+          inputmode="numeric"
+        >
+      </label>
+
+      <label for="parts">
+        何等分しますか
+
+        <input
+          id="parts"
+          type="number"
+          min="2"
+          max="12"
+          value=""
+          inputmode="numeric"
+        >
+      </label>
+
+    </section>
+
+    <section id="diagramArea" class="diagram-area">
+
+      <div id="totalLabel" class="total-label">
+        80cm
+      </div>
+
+      <div id="bar" class="bar"></div>
+
+    </section>
+
+    <div class="button-area">
+
+      <button
+        id="screenshotButton"
+        class="screenshot-button"
+        type="button"
+      >
+        スクリーンショット
+      </button>
+
+      <a href="sansuu.html" class="back-button">
+        ← 算数教材へ戻る
+      </a>
+
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <section id="previewArea" class="preview-area">
+
+      <h2>線分図の画像</h2>
+
+      <p class="preview-guide">
+        iPadでは、下の画像を長押しして「写真に保存」を選んでください。
+      </p>
+
+      <img
+        id="previewImage"
+        class="preview-image"
+        alt="作成した線分図の画像"
+      >
+
+    </section>
+
+    <canvas id="captureCanvas"></canvas>
+
+  </main>
+
+  <script>
+    const totalInput =
+      document.getElementById("total");
+
+    const partsInput =
+      document.getElementById("parts");
+
+    const totalLabel =
+      document.getElementById("totalLabel");
+
+    const bar =
+      document.getElementById("bar");
+
+    const screenshotButton =
+      document.getElementById("screenshotButton");
+
+    const captureCanvas =
+      document.getElementById("captureCanvas");
+
+    const previewArea =
+      document.getElementById("previewArea");
+
+    const previewImage =
+      document.getElementById("previewImage");
+
+    const message =
+      document.getElementById("message");
+
+    function getValues() {
+      const total = Number(totalInput.value);
+      const parts = Number(partsInput.value);
+
+      if (!Number.isFinite(total) || total <= 0) {
+        return null;
+      }
+
+      if (
+        !Number.isInteger(parts) ||
+        parts < 2 ||
+        parts > 12
+      ) {
+        return null;
+      }
+
+      return {
+        total: total,
+        parts: parts
+      };
+    }
+
+    function updateDiagram() {
+      const values = getValues();
+
+      if (!values) {
+        return;
+      }
+
+      totalLabel.textContent =
+        values.total + "cm";
+
+      bar.innerHTML = "";
+
+      bar.style.gridTemplateColumns =
+        "repeat(" + values.parts + ", 1fr)";
+
+      for (let i = 0; i < values.parts; i++) {
+        const segment =
+          document.createElement("div");
+
+        segment.className = "segment";
+        bar.appendChild(segment);
+      }
+
+      message.textContent = "";
+    }
+
+    function createScreenshot() {
+      const values = getValues();
+
+      if (!values) {
+        message.textContent =
+          "元の長さと等分する数を正しく入力してください。";
+
+        previewArea.classList.remove("show");
+        return;
+      }
+
+      const canvasWidth = 1200;
+      const canvasHeight = 500;
+      const scale = 2;
+
+      captureCanvas.width =
+        canvasWidth * scale;
+
+      captureCanvas.height =
+        canvasHeight * scale;
+
+      captureCanvas.style.width =
+        canvasWidth + "px";
+
+      captureCanvas.style.height =
+        canvasHeight + "px";
+
+      const ctx =
+        captureCanvas.getContext("2d");
+
+      ctx.scale(scale, scale);
+
+      /* 白い背景 */
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
+
+      /* タイトル */
+      ctx.fillStyle = "#222222";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font =
+        'bold 54px "Yu Gothic", Meiryo, sans-serif';
+
+      ctx.fillText(
+        values.total + "cm",
+        canvasWidth / 2,
+        105
+      );
+
+      /* 線分図 */
+      const barX = 80;
+      const barY = 190;
+      const barWidth = canvasWidth - 160;
+      const barHeight = 190;
+
+      ctx.strokeStyle = "#222222";
+      ctx.lineWidth = 8;
+      ctx.strokeRect(
+        barX,
+        barY,
+        barWidth,
+        barHeight
+      );
+
+      /* 区切り線 */
+      ctx.lineWidth = 6;
+
+      const segmentWidth =
+        barWidth / values.parts;
+
+      for (
+        let i = 1;
+        i < values.parts;
+        i++
+      ) {
+        const x =
+          barX + segmentWidth * i;
+
+        ctx.beginPath();
+        ctx.moveTo(x, barY);
+        ctx.lineTo(
+          x,
+          barY + barHeight
+        );
+        ctx.stroke();
+      }
+
+      const imageData =
+        captureCanvas.toDataURL("image/png");
+
+      previewImage.src = imageData;
+      previewArea.classList.add("show");
+
+      message.textContent =
+        "線分図の画像を作りました。";
+
+      previewArea.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    totalInput.addEventListener(
+      "input",
+      updateDiagram
+    );
+
+    partsInput.addEventListener(
+      "input",
+      updateDiagram
+    );
+
+    screenshotButton.addEventListener(
+      "click",
+      createScreenshot
+    );
+
+    updateDiagram();
+  </script>
+
+</body>
+</html>
