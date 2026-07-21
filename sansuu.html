@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>3年2組 算数教材</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Yu Gothic", "Meiryo", sans-serif;
+      background: #e3f2fd;
+      color: #222;
+    }
+
+    header {
+      padding: 30px 20px;
+      background: #2196f3;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 6vw, 48px);
+    }
+
+    header p {
+      margin: 12px 0 0;
+      font-size: 19px;
+    }
+
+    main {
+      width: min(850px, 92%);
+      margin: 40px auto;
+    }
+
+    .tool-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      padding: 25px;
+      border-radius: 22px;
+      background: #43a047;
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 8px 0 #2e7d32;
+    }
+
+    .tool-button:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #2e7d32;
+    }
+
+    .back-area {
+      margin-top: 35px;
+      text-align: center;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 15px 30px;
+      border-radius: 14px;
+      background: #607d8b;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .tool-button {
+        min-height: 110px;
+        font-size: 25px;
+      }
+
+      .back-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>算数教材</h1>
+    <p>使いたい教材をえらびましょう</p>
+  </header>
+
+  <main>
+
+    <a href="senbunzu.html" class="tool-button">
+      線分図作成ツール
+    </a>
+
+    <div class="back-area">
+      <a href="index.html" class="back-button">
+        ← 教材保管庫へ戻る
+      </a>
+    </div>
+
+  </main>
+
+</body>
+</html>
